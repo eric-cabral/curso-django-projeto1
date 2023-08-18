@@ -24,7 +24,7 @@ class RecipeViewsTest(RecipeTestBase):
         )
 
     def test_recipe_home_template_loads_recipes(self):
-        self.make_recipe(is_published=False)
+        self.make_recipe()
         response = self.client.get(reverse('recipes:home'))
         content = response.content.decode('utf-8')
         response_context_recipes = response.context['recipes']
@@ -64,6 +64,14 @@ class RecipeViewsTest(RecipeTestBase):
         # Check if one recipe exists
         self.assertIn(needed_title, content)
 
+    def test_recipe_category_template_dont_load_recipes_not_published(self):
+        """Test recipe is_published false don't show"""
+        # Need a recipe for this test
+        recipe = self.make_recipe(is_published=False)
+        
+        response = self.client.get(reverse('recipes:recipe', kwargs={'id': recipe.category.id}))  # noqa: E501
+        self.assertEqual(response.status_code, 404)
+
     def test_recipe_recipe_views_fuction_is_correct(self):
         view = resolve(reverse('recipes:recipe', kwargs={'id': 1}))
         self.assertIs(view.func, views.recipe)
@@ -82,3 +90,11 @@ class RecipeViewsTest(RecipeTestBase):
 
         # Check if one recipe exists
         self.assertIn(needed_title, content)
+
+    def test_recipe_recipe_template_dont_load_recipe_not_published(self):
+        """Test recipe is_published false don't show"""
+        # Need a recipe for this test
+        recipe = self.make_recipe(is_published=False)
+        
+        response = self.client.get(reverse('recipes:recipe', kwargs={'id': recipe.id}))  # noqa: E501
+        self.assertEqual(response.status_code, 404)
