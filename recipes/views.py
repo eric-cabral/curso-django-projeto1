@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 #from utils.recipes.factory import make_recipe
 from recipes.models import Recipe
+from django.http import Http404
 
 
 def home(request):
@@ -36,4 +37,9 @@ def category(request, category_id):
 
 
 def search(request):
+    search_term = request.GET.get['q']
+    
+    if not search_term:
+        raise Http404()
+    
     return render(request, 'recipes/pages/search.html')
