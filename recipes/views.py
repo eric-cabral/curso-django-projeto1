@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-#from utils.recipes.factory import make_recipe
 from recipes.models import Recipe
 from django.http import Http404
+from django.db.models import Q
 
 
 def home(request):
@@ -42,7 +42,13 @@ def search(request):
     if not search_term:
         raise Http404()
     
+    recipes = Recipe.objects.filter(
+        Q(title__icontains=search_term) |
+        Q(description__icontains=search_term),
+    ).order_by('-id')  # Buscamos pelo título e ordenamos pelos mais recentes
+
     return render(request, 'recipes/pages/search.html', {
         'page_title': f'Search for "{search_term}" |',
         'search_term': search_term,
+        'recipes': recipes,
     })
