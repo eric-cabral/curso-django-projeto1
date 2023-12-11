@@ -12,7 +12,8 @@
 
     <main class="main-content-container">
         {% block content %}{% endblock content %}
-        </div>    
+        
+        {% include 'recipes/parcials/pagination.html' %}
     </main>
 
     {% include 'recipes/parcials/footer.html' %}
