@@ -1,5 +1,7 @@
 from unittest import TestCase
-from utils.pagination import make_pagination_range
+from pagination import make_pagination_range
+from recipes.tests.test_recipe_base import RecipeTestBase
+
 
 class PaginationTest(TestCase):
     def test_make_pagination_range_returns_a_pagination_range(self):
@@ -10,7 +12,7 @@ class PaginationTest(TestCase):
         )['pagination']
         self.assertEqual([1, 2, 3, 4], pagination)
 
-    def test_first_range_is_static_if_current_page_is_less_than_middle_page(self):
+    def test_first_range_is_static_if_current_page_is_less_than_middle_page(self):  # noqa:E501
         # Current Page = 1 | Qty Page = 2 | Middle Page = 2
         pagination = make_pagination_range(
             page_range=list(range(1, 21)),
@@ -94,3 +96,17 @@ class PaginationTest(TestCase):
             current_page=21,
         )['pagination']
         self.assertEqual([17, 18, 19, 20], pagination)
+
+
+class PaginationTestAlon(RecipeTestBase):
+    def test_show_correct_number_of_recipes(self):
+        for r in range(20):
+            self.make_recipe(
+                title=f'recipe{r}',
+                slug=f'recipe-{r}'
+            )
+
+        url = self.reverse('recipes:home')
+        response = self.client.get(url)
+
+        self.assertLessEqual(len(response.context['recipes']), 9)

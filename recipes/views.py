@@ -3,6 +3,9 @@ from recipes.models import Recipe
 from django.http import Http404
 from django.db.models import Q
 from utils.pagination import make_pagination
+import os
+
+PER_PAGE = int(os.environ.get('PER_PAGE', 6))
 
 
 def home(request):
@@ -10,7 +13,7 @@ def home(request):
         is_published=True
     ).order_by('-id')
 
-    page_obj, pagination_range = make_pagination(request, recipes, 9)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
     
     return render(request, 'recipes/pages/home.html', context={
         'recipes': page_obj,
@@ -35,7 +38,7 @@ def category(request, category_id):
         ).order_by('-id')
     )
 
-    page_obj, pagination_range = make_pagination(request, recipes, 9)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
     
     return render(request, 'recipes/pages/category.html', context={
         'recipes': page_obj,
@@ -57,7 +60,7 @@ def search(request):
         is_published=True,
     ).order_by('-id')  # Buscamos pelo título e ordenamos pelos mais recentes
 
-    page_obj, pagination_range = make_pagination(request, recipes, 9)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
 
     return render(request, 'recipes/pages/search.html', {
         'page_title': f'Search for "{search_term}" |',

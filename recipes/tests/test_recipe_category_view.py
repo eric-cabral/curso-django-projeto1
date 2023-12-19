@@ -18,7 +18,7 @@ class RecipeCategoryViewTest(RecipeTestBase):
         # Need a recipe for this test
         self.make_recipe(title=needed_title)
         response = self.client.get(reverse('recipes:category', args=(1,)))
-        content = response.content.decode('utf-8')
+        content = response.content.decode(9'utf-8')
 
         # Check if one recipe exists
         self.assertIn(needed_title, content)
